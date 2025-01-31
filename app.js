@@ -31,31 +31,24 @@ app.post('/register', async (req, res) => {
         return res.status(400).json({ message: "Please fill all the details" });
     }
 
-    try {
-        // Hash the password and save the user
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
 
-        // Create new user with hashed password
-        const newUser = new usermodel({
-            username,
-            name,
-            age,
-            email,
-            password: hash
-        });
+    const newUser = new usermodel({
+        username,
+        name,
+        age,
+        email,
+        password: hash
+    });
 
-        await newUser.save();
+    await newUser.save();
 
-        // Generate JWT token
-        let token = jwt.sign({ email: email, userid: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Generate JWT token
+    let token = jwt.sign({ email: email, userid: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-        // Send the token as a cookie
-        res.cookie("token", token, { httpOnly: true });
-        res.send("Registration Successful");
-    } catch (error) {
-        return res.status(500).send("Error saving user");
-    }
+    res.cookie("token", token, { httpOnly: true });
+    res.send("Registration Successful");
 });
 
 // Login Page
@@ -80,9 +73,9 @@ app.post('/login', async (req, res) => {
         if (result) {
             let token = jwt.sign({ email: email, userid: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
             res.cookie("token", token, { httpOnly: true });
-            res.status(200).redirect("/profile") ;  
+            res.status(200).redirect("/profile");
         } else {
-            res.status(200).redirect("/login") ;  
+            res.status(200).redirect("/login");
         }
     });
 });
@@ -94,42 +87,41 @@ app.get('/logout', (req, res) => {
 });
 
 // Profile Page (Protected Route)
-// / Profile Page (Protected Route)
-app.get('/profile', isLoggedin, (req, res) => {
-    usermodel.findOne({ email: req.user.email })
-        .then(user => {
-            res.render("profile", { user });
-        });
+app.get('/profile', isLoggedin, async (req, res) => {
+    let user = await usermodel.findOne({ email: req.user.email }).populate("posts");
+    console.log(user.posts);
+    
+    res.render("profile", { user });
 });
 
-
-//post route
-app.post('/post' , isLoggedin , async(req, res) =>{
-    let user =await  usermodel.findOne({ email: req.user.email });
-    let content = req.body;
-    postmodel.create({
+// Post Route
+app.post('/post', isLoggedin, async (req, res) => {
+    let user = await usermodel.findOne({ email: req.user.email });
+    let content = req.body.content;  // Assuming the content is coming from the request body
+    
+    let post = await postmodel.create({
         user: user._id,
-        content
+        content: content
     });
 
+    // Push the post's ID into the user's posts array
     user.posts.push(post._id);
+    await user.save();
+
+    res.redirect("/profile");
 });
 
-/// Middleware for protected routing
+// Middleware for protected routing
 function isLoggedin(req, res, next) {
     if (!req.cookies.token) {
         return res.redirect("/login");
     }
 
-    try {
-        let data = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+    jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, data) => {
         req.user = data;  // Attach the user data to the request object
         next();
-    } catch (err) {
-        return res.redirect("/login");
-    }
+    });
 }
-
 
 // Port Listening
 let PORT = process.env.PORT || 5000;
