@@ -21,7 +21,7 @@
             <div class="posts mt-20">
                 <h3 class="text-zinc-300">Your Posts.</h3>
                 <div class="postContainer">
-                    <% user.posts.forEach(function(post){ %>
+                    <% user.posts.reserve().forEach.(function(post){ %>
                         <div class="post w-1/3 mb-4 p-5 rounded-md border-2 bg-zinc-700 border-zing-900">
                             <h4 class="text-blue-500 mb-2"><%= post.username %></h4> <!-- Changed user.username to post.username -->
                             <p class="text-sm tracking-tight"> <%= post.content %></p> <!-- Fixed missing closing tag -->
