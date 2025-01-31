@@ -80,9 +80,9 @@ app.post('/login', async (req, res) => {
         if (result) {
             let token = jwt.sign({ email: email, userid: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
             res.cookie("token", token, { httpOnly: true });
-            return res.status(200).send("You are now Logged in");
+            res.status(200).redirect("/profile") ;  
         } else {
-            return res.status(401).send("Invalid Credentials");
+            res.status(200).redirect("/login") ;  
         }
     });
 });
@@ -94,26 +94,42 @@ app.get('/logout', (req, res) => {
 });
 
 // Profile Page (Protected Route)
+// / Profile Page (Protected Route)
 app.get('/profile', isLoggedin, (req, res) => {
-    res.send("Profile Page");
+    usermodel.findOne({ email: req.user.email })
+        .then(user => {
+            res.render("profile", { user });
+        });
 });
 
-// Middleware for protected routing
-function isLoggedin(req, res, next) {
-    const token = req.cookies.token;
 
-    if (!token) {
-        return res.status(401).send("You need to be logged in");
+//post route
+app.post('/post' , isLoggedin , async(req, res) =>{
+    let user =await  usermodel.findOne({ email: req.user.email });
+    let content = req.body;
+    postmodel.create({
+        user: user._id,
+        content
+    });
+
+    user.posts.push(post._id);
+});
+
+/// Middleware for protected routing
+function isLoggedin(req, res, next) {
+    if (!req.cookies.token) {
+        return res.redirect("/login");
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        let data = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+        req.user = data;  // Attach the user data to the request object
         next();
-    } catch (error) {
-        return res.status(401).send("Invalid or Expired Token");
+    } catch (err) {
+        return res.redirect("/login");
     }
 }
+
 
 // Port Listening
 let PORT = process.env.PORT || 5000;
