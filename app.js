@@ -94,6 +94,24 @@ app.get('/profile', isLoggedin, async (req, res) => {
     res.render("profile", { user });
 });
 
+// like method 
+
+app.get('/like/:id', isLoggedin, async (req, res) => {
+    let post = await postmodel.findOne({ _id: req.params.id }).populate("user");
+    if (!post) return res.status(404).send("Post not found");
+
+    // Toggle like/unlike
+    if (post.likes.indexOf(req.user.userid) === -1) {
+        post.likes.push(req.user.userid);
+    } else {
+        post.likes.splice(post.likes.indexOf(req.user.userid), 1);
+    }
+
+    await post.save();
+    res.redirect("/profile");
+});
+// Like Method
+
 // Post Route
 app.post('/post', isLoggedin, async (req, res) => {
     let user = await usermodel.findOne({ email: req.user.email });
