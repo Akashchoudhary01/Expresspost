@@ -110,7 +110,20 @@ app.get('/like/:id', isLoggedin, async (req, res) => {
     await post.save();
     res.redirect("/profile");
 });
-// Like Method
+
+// edit Method
+// Edit Method
+app.get("/edit/:id", isLoggedin, async (req, res) => {
+    let post = await postmodel.findOne({ _id: req.params.id }).populate("user");
+    res.render("edit", { post });
+});
+
+// Update Method
+app.post("/update/:id", isLoggedin, async (req, res) => {
+    let post = await postmodel.findOneAndUpdate({ _id: req.params.id }, { content: req.body.content });
+    res.redirect("/profile");
+});
+
 
 // Post Route
 app.post('/post', isLoggedin, async (req, res) => {
