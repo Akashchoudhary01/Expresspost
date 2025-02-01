@@ -156,7 +156,7 @@ app.post("/update/:id", isLoggedin, async (req, res) => {
 
 
 // Delete Post Route
-app.post("/delete/:id", async (req, res) => {
+app.post("/delete/:id", isLoggedin, async (req, res) => {
     try {
         const postId = req.params.id;
         await postmodel.findByIdAndDelete(postId);  // Use postmodel instead of Post
@@ -181,15 +181,25 @@ app.post("/upload" ,isLoggedin, upload.single("image"), async (req , res) => {
 
 // Middleware for protected routing
 function isLoggedin(req, res, next) {
-    if (!req.cookies.token) {
-        return res.redirect("/login");
-    }
+    try {
+        const token = req.cookies.token;
+        if (!token) return res.redirect("/login");
 
-    jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, data) => {
-        req.user = data;  // Attach the user data to the request object
-        next();
-    });
+        jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
+            if (err) {
+                console.log("❌ JWT Error:", err.message);
+                return res.redirect("/login");
+            }
+
+            req.user = data;
+            next();
+        });
+    } catch (error) {
+        console.log("Unexpected Error:", error);
+        res.redirect("/login");
+    }
 }
+
 
 // Port Listening
 let PORT = process.env.PORT || 5000;
