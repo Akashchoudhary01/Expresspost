@@ -23,26 +23,33 @@ JWT (Authentication)
 Multer (File uploads for profile pictures)
 
 📂 Folder Structure
-bash
-Copy
-Edit
+
 ExpressPost/
 │-- public/               # Static files (CSS, Images)
+
 │-- views/                # EJS Templates
+
 │-- models/               # Mongoose Models
+
 │-- config/               # Configuration files (DB & Multer)
+
 │-- routes/               # API routes (if modularized)
+
 │-- app.js                # Main server file
+
 │-- .env                  # Environment variables
+
 │-- package.json          # Dependencies & Scripts
+
 │-- README.md             # Project documentation
+
 🚀 Installation & Setup
+-------------------------
+
 1️⃣ Clone the Repository
-sh
-Copy
-Edit
 git clone https://github.com/Akashchoudhary01/Expresspost.git
 cd Expresspost
+
 2️⃣ Install Dependencies
 sh
 Copy
