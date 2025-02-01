@@ -11,26 +11,16 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import crypto from "crypto"
 import path from "path";
+import upload from './config/multerConfig.js';
 
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-///////////////////////////////
-const storage = multer.diskStorage({
-    destination: function(req , file ,cb ){
-        cb(null , `./public/images/uploads`)
+app.use(express.static("public"));
 
-    },
-    filename: function(req , file , cb){
-        crypto.randomBytes(12 , function(err , bytes){
-            const fn = bytes.toString("hex")+ path.extname(file.originalname)
-            cb(null , fn)   
-        })
-    }
-})
-const upload = multer({storage :storage})
+///////////////////////////////
 
 
 
@@ -164,20 +154,16 @@ app.post("/update/:id", isLoggedin, async (req, res) => {
     res.redirect("/profile");
 });
 
+app.get("/profile/upload" , (req , res) => {
+    res.render("upload")
+})
 
-//test method
-
-
-
-app.get('/test', (req, res) => {
-    res.render("test");
-});
-
-app.post('/upload', upload.single("image"), (req, res) => {
-    console.log(req.file);
-    
-    
-});
+app.post("/upload" ,isLoggedin, upload.single("image"), async (req , res) => {
+    let user = await usermodel.findOne({email:req.user.email});
+    user.profilePicture = req.file.filename;
+    await user.save();
+    res.redirect("/profile")
+})
 
 // Middleware for protected routing
 function isLoggedin(req, res, next) {
