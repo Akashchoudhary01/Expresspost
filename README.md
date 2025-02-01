@@ -8,15 +8,20 @@ Like and unlike posts
 Profile picture upload
 Secure password hashing
 Responsive UI with Tailwind CSS
+
+
 🛠 Tech Stack
-Frontend
+
+Frontend 🛠
 EJS (Embedded JavaScript for templating)
 Tailwind CSS (Styling)
-Backend
+
+Backend 🛠
 Node.js & Express.js (Server)
 MongoDB & Mongoose (Database)
 JWT (Authentication)
 Multer (File uploads for profile pictures)
+
 📂 Folder Structure
 bash
 Copy
@@ -43,31 +48,28 @@ sh
 Copy
 Edit
 npm install
+
+
 3️⃣ Set Up Environment Variables
 Create a .env file and add:
 
-ini
-Copy
-Edit
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
-4️⃣ Start the Server
-sh
-Copy
-Edit
+
+
+4️⃣ Start the Server 🚀
 npm start
 Server will run at http://localhost:5000
 
-🚀 Deployment
-
-Follow the prompts and copy the deployed URL
 
 💡 Future Enhancements
 Comments on posts
 User follow/unfollow
 Dark mode
 API rate limiting
+
+
 📜 License
 This project is open-source and available under the MIT License.
 
