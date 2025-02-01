@@ -8,15 +8,38 @@ import cookieParser from 'cookie-parser';
 import usermodel from './models/usermodel.js';
 import postmodel from './models/postmodel.js';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
+import crypto from "crypto"
+import path from "path";
 
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+///////////////////////////////
+const storage = multer.diskStorage({
+    destination: function(req , file ,cb ){
+        cb(null , `./public/images/uploads`)
+
+    },
+    filename: function(req , file , cb){
+        crypto.randomBytes(12 , function(err , bytes){
+            const fn = bytes.toString("hex")+ path.extname(file.originalname)
+            cb(null , fn)   
+        })
+    }
+})
+const upload = multer({storage :storage})
+
+
+
+
 app.get('/', (req, res) => {
     res.render("index");
 });
+
+
 
 // Register route
 app.post('/register', async (req, res) => {
@@ -48,7 +71,7 @@ app.post('/register', async (req, res) => {
     let token = jwt.sign({ email: email, userid: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
     res.cookie("token", token, { httpOnly: true });
-    res.send("Registration Successful");
+    res.redirect("/login");
 });
 
 // Login Page
@@ -94,6 +117,23 @@ app.get('/profile', isLoggedin, async (req, res) => {
     res.render("profile", { user });
 });
 
+// Post Route
+app.post('/post', isLoggedin, async (req, res) => {
+    let user = await usermodel.findOne({ email: req.user.email });
+    let content = req.body.content;  // Assuming the content is coming from the request body
+    
+    let post = await postmodel.create({
+        user: user._id,
+        content: content
+    });
+
+    // Push the post's ID into the user's posts array
+    user.posts.push(post._id);
+    await user.save();
+
+    res.redirect("/profile");
+});
+
 // like method 
 
 app.get('/like/:id', isLoggedin, async (req, res) => {
@@ -125,21 +165,18 @@ app.post("/update/:id", isLoggedin, async (req, res) => {
 });
 
 
-// Post Route
-app.post('/post', isLoggedin, async (req, res) => {
-    let user = await usermodel.findOne({ email: req.user.email });
-    let content = req.body.content;  // Assuming the content is coming from the request body
+//test method
+
+
+
+app.get('/test', (req, res) => {
+    res.render("test");
+});
+
+app.post('/upload', upload.single("image"), (req, res) => {
+    console.log(req.file);
     
-    let post = await postmodel.create({
-        user: user._id,
-        content: content
-    });
-
-    // Push the post's ID into the user's posts array
-    user.posts.push(post._id);
-    await user.save();
-
-    res.redirect("/profile");
+    
 });
 
 // Middleware for protected routing
