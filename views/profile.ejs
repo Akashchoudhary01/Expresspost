@@ -7,42 +7,71 @@
     <title>Document</title>
 </head>
 <body>
-        <div class="w-full min-h-screen bg-zinc-800 text-zinc-300 p-10">
-            <div class="w-full gap-4 flex justify-end">
-                <a href="/profile/upload" class="bg-yellow-500 rounded-md px-2 py-1 text-black mb-4">upload profile pic</a>
-                <a href="/logout" class="bg-red-500 rounded-md px-2 py-1 mb-4">Logout</a>
+    <div class="w-full min-h-screen bg-zinc-800 text-zinc-300 p-10">
+        <!-- Navigation Buttons -->
+        <div class="w-full flex justify-end gap-4">
+            <a href="/profile/upload" class="bg-yellow-500 rounded-md px-2 py-1 text-black">Upload Profile Pic</a>
+            <a href="/logout" class="bg-red-500 rounded-md px-2 py-1">Logout</a>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="flex gap-5 mb-3 items-center">
+            <div class="w-10 h-10 overflow-hidden rounded-md">
+                <img class="w-full h-full object-cover" src="/images/uploads/<%= user.profilePicture %>" alt="Profile Picture">
             </div>
-            <div class="flex gap-5 mb-3 ">
+            <h3 class="text-3xl">
+                <span class="font-light">Hello</span> <%= user.name %> 👋
+            </h3>
+        </div>
 
-                <div class="w-10 h-10  overflow-hidden   rounded-md">
-                    <img class="w-full h-full" src="/images/uploads/<%= user.profilePicture %>" alt="Profile Picture">
+        <!-- Post Form -->
+        <h5 class="p-1">You can create a new post</h5>
+        <form method="post" action="/post" class="flex flex-col items-center">
+            <textarea name="content" placeholder="What's on your mind?" 
+                class="w-full max-w-lg p-2 outline-none text-white resize-none bg-transparent border-2 border-zinc-900 rounded-md">
+            </textarea>
+            <input class="px-5 py-2 mt-2 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600 transition duration-300" 
+                type="submit" value="Create new post">
+        </form>
 
-                </div>
-                
-                <h3 class="text-3xl"> <span class="font-light">Hello</span> <%= user.name %> 👋</h3>
-            </div>
-            <h5 class="p-1">You can Create a new Post</h5>
-            <form method="post" action="/post">
-                <textarea name="content" placeholder="What's on your mind" class="justify-center text-center w-1/3 p-2 outline-none text-white resize-none bg-transparent border-2 border-zinc-900 rounded-md" id=""></textarea>
-                <input class="px-3 py-2 mt-2 bg-blue-500 block m-.5 rounded-mb w-40" type="submit" value="Create new post">
-            </form>
-
-            <div class="posts mt-20">
-                <h3 class="text-zinc-300">Your Posts.</h3>
-                <div class="postContainer">
-                    <% user.posts.reverse().forEach(function(post){ %>
-                        <div class="post w-1/3 mb-4 p-5 rounded-md border-2 bg-zinc-700 border-zing-900">
-                            <h4 class="text-blue-500 mb-2"><%= post.username %></h4> 
-                            <p class="text-sm tracking-tight"> <%= post.content %></p> 
-                            <small class="mt-2 inline-block"><%= post.likes.length %> likes</small>
-                            <div class="btns flex justify-between mt-5">
-
-                                <a href="/like/<%= post._id %>" class="text-blue-500"> <%= post.likes.indexOf(user._id)=== -1 ? "like" : "unlike" %></a>
-                               
-                                <a href="/edit/<%= post._id%>" class="text-zinc-500">Edit</a>
-                            </div>
+        <!-- User Posts -->
+        <div class="posts mt-10">
+            <h3 class="text-zinc-300 mb-4">Your Posts</h3>
+            <!-- Responsive Post Grid -->
+            <div class="postContainer grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% user.posts.reverse().forEach(function(post){ %>
+                    <div class="post w-full max-w-md p-5 rounded-md border-2 bg-zinc-700 border-zinc-900 mx-auto">
+                        <h4 class="text-blue-500 mb-2"><%= post.username %></h4> 
+                        <p class="text-sm tracking-tight"><%= post.content %></p> 
+                        <small class="mt-2 block"><%= post.likes.length %> likes</small>
+                        <div class="btns flex justify-between mt-5">
+                            <a href="/like/<%= post._id %>" class="text-blue-500">
+                                <%= post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike" %>
+                            </a>
+                            <a href="/edit/<%= post._id %>" class="text-zinc-500">Edit</a>
                         </div>
-                    <% }) %>
+                    </div>
+                <% }) %>
+            
+                <!-- Demo Posts (Now Outside the Loop) -->
+                <div class="post w-full max-w-md p-5 rounded-md border-2 bg-zinc-700 border-zinc-900 mx-auto">
+                    <h4 class="text-blue-500 mb-2">_AkashChoudhary1</h4> 
+                    <p class="text-sm tracking-tight">Mai to papa hun is duniya ka papa</p> 
+                    <small class="mt-2 block">0 likes</small>
+                    <div class="btns flex justify-between mt-5">
+                        <a href="#" class="text-blue-500">Like</a>
+                        <a href="#" class="text-zinc-500">Edit</a>
+                    </div>
+                </div>
+            
+                <div class="post w-full max-w-md p-5 rounded-md border-2 bg-zinc-700 border-zinc-900 mx-auto">
+                    <h4 class="text-blue-500 mb-2">Abhay</h4> 
+                    <p class="text-sm tracking-tight">Ram Ram mitro</p> 
+                    <small class="mt-2 block">0 likes</small>
+                    <div class="btns flex justify-between mt-5">
+                        <a href="#" class="text-blue-500">Like</a>
+                        <a href="#" class="text-zinc-500">Edit</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -102,7 +102,7 @@ app.get('/logout', (req, res) => {
 // Profile Page (Protected Route)
 app.get('/profile', isLoggedin, async (req, res) => {
     let user = await usermodel.findOne({ email: req.user.email }).populate("posts");
-    console.log(user.posts);
+    // console.log(user.posts);
     
     res.render("profile", { user });
 });
@@ -110,19 +110,19 @@ app.get('/profile', isLoggedin, async (req, res) => {
 // Post Route
 app.post('/post', isLoggedin, async (req, res) => {
     let user = await usermodel.findOne({ email: req.user.email });
-    let content = req.body.content;  // Assuming the content is coming from the request body
     
     let post = await postmodel.create({
+        username: user.username,  // Ensure username is stored
         user: user._id,
-        content: content
+        content: req.body.content
     });
 
-    // Push the post's ID into the user's posts array
     user.posts.push(post._id);
     await user.save();
 
     res.redirect("/profile");
 });
+
 
 // like method 
 
@@ -153,6 +153,20 @@ app.post("/update/:id", isLoggedin, async (req, res) => {
     let post = await postmodel.findOneAndUpdate({ _id: req.params.id }, { content: req.body.content });
     res.redirect("/profile");
 });
+
+
+// Delete Post Route
+app.post("/delete/:id", async (req, res) => {
+    try {
+        const postId = req.params.id;
+        await postmodel.findByIdAndDelete(postId);  // Use postmodel instead of Post
+        res.redirect("/profile");  // Redirect back to profile after deletion
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error deleting post");
+    }
+});
+
 
 app.get("/profile/upload" , (req , res) => {
     res.render("upload")

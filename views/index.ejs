@@ -4,25 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <title>Document</title>
+    <title>Register</title>
 </head>
-<body>
-        <div class="w-full min-h-screen bg-zinc-800 text-zinc-300 p-10">
-            <h2 class="text-3xl text-white mb-5 ">Create Account</h2>
-            <a href="/login" class="text-blue-500 mb-5 hover:underline">
+<body class="bg-zinc-900 flex flex-col min-h-screen">
+
+    <div class="flex flex-col items-center justify-center flex-grow">
+        <!-- Title Section -->
+        <div class="text-white mt-4 mb-8 text-center">
+            <h1 class="text-4xl font-bold">Expresspost</h1>
+            <p class="text-md">Express your thoughts</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="w-84 bg-zinc-800 text-zinc-300 p-8  mb-4 rounded-lg shadow-[5px_5px_12px_white]">
+            <h2 class="text-3xl text-white mb-5 text-center">Create Account</h2>
+            
+            <a href="/login" class="text-blue-500 mb-5 block text-center hover:underline">
                 Already registered? Login here
             </a>
-             <form action="/register" method="post">
-            <input type="text" class="px-2 py-2 outline-none bg-transparent border-2 border-zinc-900" placeholder="name" name="name">
-            <input type="text" class="px-2 py-2 outline-none bg-transparent border-2 border-zinc-900" placeholder="username" name="username">
-            <input type="number" class="px-2 py-2 outline-none bg-transparent border-2 border-zinc-900" placeholder="age" name="age">
-            <input type="text" class="px-3 py-2 outline-none bg-transparent border-2 border-zinc-900" placeholder="email" name="email">
-            <input type="password" class="px-2 py-2 outline-none bg-transparent border-2 border-zinc-900" placeholder="password" name="password">
-            <input type="submit" class="px-5 rounded-md py-2 bg-blue-500 text-sm " value="Create Account">
-        </form>
-        
+            
+            <form action="/register" method="post" class="flex flex-col gap-4">
+                <input type="text" class="px-2 py-1 outline-none bg-transparent border border-zinc-700 rounded-md" placeholder="Name" name="name">
+                
+                <input type="text" class="px-2 py-1 outline-none bg-transparent border border-zinc-700 rounded-md" placeholder="Username" name="username">
+                
+                <input type="number" class="px-2 py-1 outline-none bg-transparent border border-zinc-700 rounded-md" placeholder="Age" name="age">
+                
+                <input type="text" class="px-2 py-1 outline-none bg-transparent border border-zinc-700 rounded-md" placeholder="Email" name="email">
+                
+                <input type="password" class="px-2 py-1 outline-none bg-transparent border border-zinc-700 rounded-md" placeholder="Password" name="password">
+                
+                <input type="submit" class="px-3 py-2 bg-blue-500 text-white text-sm rounded-md cursor-pointer hover:bg-blue-600 transition duration-300" value="Create Account">
+            </form>
+        </div>
     </div>
-</div>
-    
+
+    <!-- Footer Section -->
+    <footer class="w-full bg-zinc-800 mt-8 border-t border-1-white text-center text-white py-4">
+        <p>&copy; 2025 Expresspost. All Rights Reserved.</p>
+        <p>
+            <a href="/terms" class="hover:underline">Terms of Service</a> | 
+            <a href="/privacy" class="hover:underline">Privacy Policy</a>
+        </p>
+    </footer>
+
 </body>
 </html>

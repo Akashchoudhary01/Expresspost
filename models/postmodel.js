@@ -4,6 +4,7 @@ const postSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
+  username: { type: String, required: true }, 
   date: {
     type: Date,
     default: Date.now,
